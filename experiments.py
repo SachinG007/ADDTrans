@@ -22,6 +22,7 @@ from models.encoders_decoders import conv_encoder, conv_decoder
 from models import dsebm, dagmm, adgan
 from tensorflow.python.keras import backend as K
 from sklearn.metrics import roc_auc_score
+import keras
 
 RESULTS_DIR = ''
 
@@ -30,8 +31,12 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     gpu_to_use = gpu_q.get()
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu_to_use
 
-    (x_train, y_train), (x_test, y_test) = dataset_load_fn()
-
+    # (x_train, y_train), (x_test, y_test) = dataset_load_fn()
+    # dataset = load_dataset("imagenet", "data", args.mnist_num)
+    # (x_train, y_train), (x_test, y_test) = dataset.loaders(batch_size=args.batch_size)
+    datagen = keras.preprocessing.image.ImageDataGenerator()
+    (x_train, y_train) = datagen.flow_from_directory('/mnt/output/imagenet_sub/', target_size=(224, 224, 3), class_mode='categorical', batch_size=256)
+    (x_test, y_test) = datagen.flow_from_directory('/mnt/output/imagenet_sub_test/', target_size=(224, 224, 3), class_mode='categorical', batch_size=256)
     if dataset_name in ['cats-vs-dogs']:
         transformer = Transformer(16, 16)
         n, k = (16, 8)
