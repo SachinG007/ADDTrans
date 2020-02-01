@@ -42,6 +42,18 @@ class SGDTorch(SGD):
 
 def _get_channels_axis():
     return -1 if K.image_data_format() == 'channels_last' else 1
+
+
+def _conv_kernel_initializer(shape, dtype=None):
+    fan_in, fan_out = _compute_fans(shape)
+    stddev = np.sqrt(2. / fan_in)
+    return K.random_normal(shape, 0., stddev, dtype)
+
+
+def _dense_kernel_initializer(shape, dtype=None):
+    fan_in, fan_out = _compute_fans(shape)
+    stddev = 1. / np.sqrt(fan_in)
+    return K.random_uniform(shape, -stddev, stddev, dtype)
     
 def batch_norm():
     return BatchNormalization(axis=_get_channels_axis(), momentum=0.1, epsilon=1e-4,
