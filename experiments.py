@@ -21,6 +21,7 @@ from models.lenet import lenet
 from models.encoders_decoders import conv_encoder, conv_decoder
 from models import dsebm, dagmm, adgan
 from tensorflow.python.keras import backend as K
+from sklearn.metrics import roc_auc_score
 
 RESULTS_DIR = ''
 
@@ -111,17 +112,18 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     scores /= transformer.n_transforms
     labels = y_test.flatten() == single_class_ind
 
-    res_file_name = '{}_transformations_{}_{}.npz'.format(dataset_name,
-                                                 get_class_name_from_index(single_class_ind, dataset_name),
-                                                 datetime.now().strftime('%Y-%m-%d-%H%M'))
-    res_file_path = os.path.join(RESULTS_DIR, dataset_name, res_file_name)
-    save_roc_pr_curve_data(scores, labels, res_file_path)
-
-    mdl_weights_name = '{}_transformations_{}_{}_weights.h5'.format(dataset_name,
-                                                           get_class_name_from_index(single_class_ind, dataset_name),
-                                                           datetime.now().strftime('%Y-%m-%d-%H%M'))
-    mdl_weights_path = os.path.join(RESULTS_DIR, dataset_name, mdl_weights_name)
-    mdl.save_weights(mdl_weights_path)
+    # res_file_name = '{}_transformations_{}_{}.npz'.format(dataset_name,
+    #                                              get_class_name_from_index(single_class_ind, dataset_name),
+    #                                              datetime.now().strftime('%Y-%m-%d-%H%M'))
+    # res_file_path = os.path.join(RESULTS_DIR, dataset_name, res_file_name)
+    # save_roc_pr_curve_data(scores, labels, res_file_path)
+    test_auc = roc_auc_score(labels, scores)
+    print("**AUC** ", " Class ", single_class_ind, " : ", test_auc)
+    # mdl_weights_name = '{}_transformations_{}_{}_weights.h5'.format(dataset_name,
+    #                                                        get_class_name_from_index(single_class_ind, dataset_name),
+    #                                                        datetime.now().strftime('%Y-%m-%d-%H%M'))
+    # mdl_weights_path = os.path.join(RESULTS_DIR, dataset_name, mdl_weights_name)
+    # mdl.save_weights(mdl_weights_path)
 
     gpu_q.put(gpu_to_use)
 
