@@ -43,7 +43,8 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     else:
         transformer = Transformer(8, 8)
         n, k = (10, 4)
-    mdl = lenet(x_train.shape[1:], transformer.n_transforms, n, k)
+    # mdl = lenet(x_train.shape[1:], transformer.n_transforms, n, k)
+    mdl = keras.applications.mobilenet.MobileNet(input_shape=(224, 224, 3), alpha=0.35, depth_multiplier=0.35, classes=transformer.n_transforms)
     mdl.compile('adam',
                 'categorical_crossentropy',
                 ['acc'])
