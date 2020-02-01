@@ -17,7 +17,7 @@ from keras.utils import to_categorical
 from utils import load_cifar10, load_cats_vs_dogs, load_fashion_mnist, load_cifar100
 from utils import save_roc_pr_curve_data, get_class_name_from_index, get_channels_axis
 from transformations import Transformer
-from models.wide_residual_network import create_wide_residual_network
+from models.lenet import lenet
 from models.encoders_decoders import conv_encoder, conv_decoder
 from models import dsebm, dagmm, adgan
 from tensorflow.python.keras import backend as K
@@ -37,11 +37,11 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     else:
         transformer = Transformer(8, 8)
         n, k = (10, 4)
-    mdl = create_wide_residual_network(x_train.shape[1:], transformer.n_transforms, n, k)
+    mdl = lenet(x_train.shape[1:], transformer.n_transforms, n, k)
     mdl.compile('adam',
                 'categorical_crossentropy',
                 ['acc'])
-
+    mdl.Summary()
     x_train_task = x_train[y_train.flatten() == single_class_ind]
     transformations_inds = np.tile(np.arange(transformer.n_transforms), len(x_train_task))
     x_train_task_transformed = transformer.transform_batch(np.repeat(x_train_task, transformer.n_transforms, axis=0),
