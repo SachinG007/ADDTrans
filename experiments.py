@@ -50,7 +50,7 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     batch_size = 128
 
     mdl.fit(x=x_train_task_transformed, y=to_categorical(transformations_inds),
-            batch_size=batch_size, epochs=10)
+            batch_size=batch_size, epochs=15)
     
 
     #################################################################################################
@@ -352,9 +352,9 @@ def run_experiments(load_dataset_fn, dataset_name, q, n_classes):
             for idx,p in enumerate(processes):
                 print(idx)
                 p.start()
+                
+            for p in processes:
                 p.join()
-            #for p in processes:
-                #p.join()
 
 
 def create_auc_table(metric='roc_auc'):
