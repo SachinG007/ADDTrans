@@ -20,7 +20,7 @@ from transformations import Transformer
 from models.wide_residual_network import create_wide_residual_network
 from models.encoders_decoders import conv_encoder, conv_decoder
 from models import dsebm, dagmm, adgan
-import keras.backend as K
+from tensorflow.python.keras import backend as K
 
 RESULTS_DIR = ''
 
@@ -49,8 +49,8 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     batch_size = 128
 
     mdl.fit(x=x_train_task_transformed, y=to_categorical(transformations_inds),
-            batch_size=batch_size, epochs=int(np.ceil(200/transformer.n_transforms))
-            )
+            batch_size=batch_size, epochs=10)
+    
 
     #################################################################################################
     # simplified normality score
@@ -347,10 +347,12 @@ def run_experiments(load_dataset_fn, dataset_name, q, n_classes):
                 p.start()
                 p.join()
         else:
-            for p in processes:
+            for idx,p in enumerate(processes):
+                print(idx)
                 p.start()
-            for p in processes:
                 p.join()
+            #for p in processes:
+                #p.join()
 
 
 def create_auc_table(metric='roc_auc'):
@@ -388,7 +390,7 @@ def create_auc_table(metric='roc_auc'):
 
 if __name__ == '__main__':
     freeze_support()
-    N_GPUS = 2
+    N_GPUS = 4
     man = Manager()
     q = man.Queue(N_GPUS)
     for g in range(N_GPUS):
