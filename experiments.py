@@ -41,7 +41,7 @@ def _transformations_experiment(dataset_load_fn, dataset_name, single_class_ind,
     mdl.compile('adam',
                 'categorical_crossentropy',
                 ['acc'])
-    mdl.Summary()
+    mdl.summary()
     x_train_task = x_train[y_train.flatten() == single_class_ind]
     transformations_inds = np.tile(np.arange(transformer.n_transforms), len(x_train_task))
     x_train_task_transformed = transformer.transform_batch(np.repeat(x_train_task, transformer.n_transforms, axis=0),
