@@ -349,7 +349,7 @@ def run_experiments(load_dataset_fn, dataset_name, q, n_classes):
     # Transformations
     for _ in range(n_runs):
         processes = [Process(target=_transformations_experiment,
-                             args=(load_dataset_fn, dataset_name, c, q)) for c in range(n_classes)]
+                             args=(load_dataset_fn, dataset_name, c, q)) for c in range(0,2)]
         if dataset_name in ['cats-vs-dogs']:  # Self-labeled set is memory consuming
             for p in processes:
                 p.start()
@@ -358,9 +358,9 @@ def run_experiments(load_dataset_fn, dataset_name, q, n_classes):
             for idx,p in enumerate(processes):
                 print(idx)
                 p.start()
-                
-            for p in processes:
                 p.join()
+            # for p in processes:
+            #     p.join()
 
 
 def create_auc_table(metric='roc_auc'):
